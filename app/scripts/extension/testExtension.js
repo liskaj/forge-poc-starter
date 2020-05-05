@@ -17,6 +17,16 @@ class TestExtension extends Autodesk.Viewing.Extension {
     }
 
     unload() {
+        if (this._elementDataPanel) {
+            this.viewer.removePanel(this._elementDataPanel);
+            this._elementDataPanel.uninitialize();
+            this._elementDataPanel = null;
+        }
+        if (this._elementStatusPanel) {
+            this.viewer.removePanel(this._elementStatusPanel);
+            this._elementStatusPanel.uninitialize();
+            this._elementStatusPanel = null;
+        }
         console.debug(`extension unloaded`);
         return true;
     }
