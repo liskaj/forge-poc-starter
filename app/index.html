@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Skanska Forge POC</title>
+    <link type="image/x-icon" rel="shortcut icon"  href="favicon.ico" />
+    <link type="text/css" rel="stylesheet" href="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/style.css" />
+    <link type="text/css" rel="stylesheet" href="styles/site.css" />
+    <script type="text/javascript" src="//code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="//unpkg.com/axios@0.18.0/dist/axios.min.js"></script>
+    <script type="text/javascript" src="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/viewer3D.js"></script>
+</head>
+<body>
+    <header>
+        <div class="header-logo"></div>
+        <div class="header-title">Forge POC</div>
+    </header>
+    <main>
+        <div class="left-container">
+            <div>
+                <label for="project">Project</label>
+                <input id="project" value="b.95bfebfd-47bc-4b14-8ce3-b39d5268477c">
+            </div>
+            <div>
+                <label for="item">Item</label>
+                <input id="item" value="urn:adsk.wipprod:dm.lineage:6UMgRV5RR7CxtyGA9QUMmg">
+            </div>
+            <div>
+                <button id="btn-load">Load</button>
+            </div>
+        </div>
+        <div id="viewer-container" class="viewer-container"></div>
+    </main>
+    <script type="text/javascript" src="scripts/main.js"></script>
+    <script type="text/javascript" src="scripts/extension/testExtension.js"></script>
+</body>

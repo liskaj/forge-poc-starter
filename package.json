@@ -1,0 +1,11 @@
+{
+    "name": "fsp-starter",
+    "version": "1.0.0",
+    "scripts": {
+        "start": "node server/server.js"
+    },
+    "dependencies": {
+        "express": "^4.17.1",
+        "forge-server-utils": "^8.0.14"
+    }
+}
