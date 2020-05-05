@@ -68,6 +68,7 @@ function load(urn) {
                     extensions: [
                         'Skanska.Test'
                     ],
+                    itemID: item.val(),
                     storageService: storageService
                 };
 

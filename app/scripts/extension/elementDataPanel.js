@@ -16,7 +16,7 @@ class ElementDataPanel extends Autodesk.Viewing.UI.DockingPanel {
         // create UI
         const url = `${window.location.href}scripts/extension/res/elementDataPanel.html`;
 
-        Autodesk.Viewing.Private.getHtmlTemplate(url, (error, content) => {
+        Autodesk.Viewing.Private.getHtmlTemplate(url, async (error, content) => {
             this._onTemplate(error, content);
         });
     }
@@ -28,6 +28,7 @@ class ElementDataPanel extends Autodesk.Viewing.UI.DockingPanel {
         }
         const values = await this._extension.storageService.getLookupValues('LOC');
 
+        this._lookup.empty();
         values.forEach((v) => {
             this._lookup.append(
                 $('<option/>')
@@ -42,7 +43,21 @@ class ElementDataPanel extends Autodesk.Viewing.UI.DockingPanel {
         return this.isVisible();
     }
 
-    _onTemplate(error, content) {
+    async _onApplyClick() {
+        const selectedValue = this._lookup[0]['value'];
+
+        const idMapping = await this._extension.getIdMapping();
+        const selection = this._extension.viewer.getSelection();
+        const extId = idMapping[selection[0]];
+
+        await this._extension.storageService.saveElementData({
+            urn: this._extension.itemID,
+            externalID: extId,
+            LOC: selectedValue
+        });
+    }
+
+    async _onTemplate(error, content) {
         if (error) {
             console.error(error);
             return;
@@ -53,8 +68,12 @@ class ElementDataPanel extends Autodesk.Viewing.UI.DockingPanel {
         this.scrollContainer.appendChild(tmp.childNodes[0]);
         // bind to controls
         this._lookup = $('#lookup');
+        this._btnApply = $('#apply');
+        this._btnApply.on('click', async () => {
+            await this._onApplyClick();
+        });
         // update controls
         this._templateLoaded = true;
-        this.refresh();
+        await this.refresh();
     }
 }

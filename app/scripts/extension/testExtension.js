@@ -1,6 +1,7 @@
 class TestExtension extends Autodesk.Viewing.Extension {
     constructor(viewer, options) {
         super(viewer, options);
+        this._itemID = options.itemID;
         this._storageService = options.storageService;
     }
 
@@ -18,8 +19,32 @@ class TestExtension extends Autodesk.Viewing.Extension {
         this._createToolbar();
     }
 
+    get itemID() {
+        return this._itemID;
+    }
+
     get storageService() {
         return this._storageService;
+    }
+
+    getIdMapping() {
+        return new Promise((resolve) => {
+            if (this.idMapping) {
+                resolve(this.idMapping);
+            } else {
+                this.viewer.model.getExternalIdMapping((mapping) => {
+                    this.idMapping = {};
+                    const extIds = Object.keys(mapping);
+    
+                    extIds.forEach((extId) => {
+                        const dbId = mapping[extId];
+    
+                        this.idMapping[dbId] = extId;
+                    });
+                    resolve(this.idMapping);
+                });
+            }
+        });
     }
 
     _createToolbar() {
@@ -41,7 +66,7 @@ class TestExtension extends Autodesk.Viewing.Extension {
         if (!this._elementDataPanel) {
             this._elementDataPanel = new ElementDataPanel(this.viewer.container, 'Skanska.Test.ElementDataPanel', 'Element Data', {
                 extension: this
-            }, this);
+            });
             this.viewer.addPanel(this._elementDataPanel);
         }
         const selection = this.viewer.getSelection();
