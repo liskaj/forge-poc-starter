@@ -18,6 +18,20 @@ router.get('/lookup/:key', async (req, res) => {
     }
 });
 
+// POST /api/storage/element
+router.post('/element', async (req, res) => {
+    try {
+        const input = req.body;
+        const url = `${config.storage.baseURL}/element`;
+
+        await post(url, input);
+        res.status(200).end();
+    } catch (err) {
+        console.error(err);
+        res.status(400).send(err);
+    }
+});
+
 async function get(url) {
     return new Promise((resolve, reject) => {
         let headers = {
@@ -28,6 +42,27 @@ async function get(url) {
             method: 'get',
             url: url,
             headers: headers
+        }).then((res) => {
+            resolve(res.data);
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+}
+
+async function post(url, data) {
+    return new Promise((resolve, reject) => {
+        let headers = {
+            'key': `${config.storage.key}`,
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        };
+
+        axios({
+            method: 'post',
+            url: url,
+            headers: headers,
+            data: data
         }).then((res) => {
             resolve(res.data);
         }).catch((err) => {
