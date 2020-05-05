@@ -10,14 +10,29 @@ $(document).ready(async () => {
         onLoadClick();
     });
     container = $('#viewer-container');
+    project = $('#project');
+    item = $('#item');
     await initialize();
 });
 
 async function onLoadClick() {
     console.debug(`onLoad`);
-    const urn = `urn:dXJuOmFkc2sud2lwcHJvZDpmcy5maWxlOnZmLjZVTWdSVjVSUjdDeHR5R0E5UVVNbWc_dmVyc2lvbj0x`;
+    const itemDetails = await getItemDetails(project.val(), item.val());
+    const urn = `urn:${itemDetails.urn}`;
 
     await load(urn);
+}
+
+async function getItemDetails(projectID, itemID) {
+    const response = await fetch(`/api/data/projects/${projectID}/items/${itemID}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+    const result = await response.json();
+
+    return result;
 }
 
 async function getToken(callback) {
@@ -31,7 +46,6 @@ async function getToken(callback) {
 
     callback(token.access_token, token.expires_in);
 }
-
 
 function initialize() {
     return new Promise((resolve, reject) => {
