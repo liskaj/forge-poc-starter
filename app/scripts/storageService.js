@@ -5,6 +5,12 @@ class StorageService extends ServiceClient {
         return this.get(url);
     }
 
+    getData(itemID) {
+        const url = `/api/storage/element/${itemID}`;
+
+        return this.get(url);
+    }
+
     saveElementData(data) {
         const url = `/api/storage/element`;
 

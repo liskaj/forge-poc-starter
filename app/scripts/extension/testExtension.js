@@ -3,6 +3,12 @@ class TestExtension extends Autodesk.Viewing.Extension {
         super(viewer, options);
         this._itemID = options.itemID;
         this._storageService = options.storageService;
+        this._colorMapping = {
+            'Not delivered': new THREE.Vector4(1.0, 0.4, 0.0, 0.8),
+            'On site': new THREE.Vector4(0.0, 1.0, 0.1, 0.8),
+            'In progress': new THREE.Vector4(0.0, 0.6, 1.0, 0.8),
+            'Installed': new THREE.Vector4(0.7, 0.0, 1.0, 0.8)
+        };
     }
 
     load() {
@@ -27,6 +33,28 @@ class TestExtension extends Autodesk.Viewing.Extension {
         return this._storageService;
     }
 
+    displayStatus(statusData) {
+        return new Promise((resolve) => {
+            this.viewer.model.getExternalIdMapping((mapping) => {
+                const names = Object.keys(statusData);
+                const allIds = [];
+
+                names.forEach((n) => {
+                    const color = this._colorMapping[n];
+                    const ids = statusData[n];
+
+                    ids.forEach((id) => {
+                        const dbId = mapping[id];
+
+                        this.viewer.setThemingColor(dbId, color, this.viewer.model, true);
+                        allIds.push(dbId);
+                    });
+                });
+                this.viewer.isolate(allIds);
+            });
+        });
+    }
+
     getIdMapping() {
         return new Promise((resolve) => {
             if (this.idMapping) {
@@ -48,21 +76,31 @@ class TestExtension extends Autodesk.Viewing.Extension {
     }
 
     _createToolbar() {
+        // add group to main toolbar
+        const ctrlGroup = new Autodesk.Viewing.UI.ControlGroup('Skanska.Test.ControlGroup');
+
+        this.viewer.toolbar.addControl(ctrlGroup);
+        // element data
         this._btnElementData = new Autodesk.Viewing.UI.Button('Skanska.Test.ElementData');
         this._btnElementData.setIcon('adsk-icon-bug');
         this._btnElementData.setToolTip('Element Data');
-        this._btnElementData.onClick = async (e) => {
-            this._onElementData(e);
+        this._btnElementData.onClick = async () => {
+            this._onElementData();
         };
-        // add button to the goup
-        const ctrlGroup = new Autodesk.Viewing.UI.ControlGroup('Skanska.Test.ControlGroup');
-
+        // add button to the group
         ctrlGroup.addControl(this._btnElementData);
-        // add group to main toolbar
-        this.viewer.toolbar.addControl(ctrlGroup);
+        // element status
+        this._btnElementStatus = new Autodesk.Viewing.UI.Button('Skanska.Test.ElementStatus');
+        this._btnElementStatus.setIcon('adsk-icon-bug');
+        this._btnElementStatus.setToolTip('Element Status');
+        this._btnElementStatus.onClick = async () => {
+            this._onElementStatus();
+        };
+        // add button to the group
+        ctrlGroup.addControl(this._btnElementStatus);
     }
 
-    async _onElementData(e) {
+    async _onElementData() {
         if (!this._elementDataPanel) {
             this._elementDataPanel = new ElementDataPanel(this.viewer.container, 'Skanska.Test.ElementDataPanel', 'Element Data', {
                 extension: this
@@ -78,6 +116,21 @@ class TestExtension extends Autodesk.Viewing.Extension {
         }
         if (this._elementDataPanel.isVisible()) {
             await this._elementDataPanel.refresh();
+        }
+    }
+
+    async _onElementStatus() {
+        if (!this._elementStatusPanel) {
+            this._elementStatusPanel = new ElementStatusPanel(this.viewer.container, 'Skanska.Test.ElementStatusPanel', 'Element Status', {
+                extension: this
+            });
+            this.viewer.addPanel(this._elementStatusPanel);
+            this._elementStatusPanel.setVisible(true);
+        } else {
+            this._elementStatusPanel.toggleVisibility();
+        }
+        if (this._elementStatusPanel.isVisible()) {
+            await this._elementStatusPanel.refresh();
         }
     }
 }
