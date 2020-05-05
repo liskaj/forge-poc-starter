@@ -1,5 +1,6 @@
 let btnLoad;
 let container;
+let dataService;
 let storageService;
 let project;
 let item;
@@ -16,27 +17,16 @@ $(document).ready(async () => {
     project = $('#project');
     item = $('#item');
     await initialize();
+    dataService = new DataService();
     storageService = new StorageService();
 });
 
 async function onLoadClick() {
     console.debug(`onLoad`);
-    const itemDetails = await getItemDetails(project.val(), item.val());
+    const itemDetails = await dataService.getItemDetails(project.val(), item.val());
     const urn = `urn:${itemDetails.urn}`;
 
     await load(urn);
-}
-
-async function getItemDetails(projectID, itemID) {
-    const response = await fetch(`/api/data/projects/${projectID}/items/${itemID}`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    });
-    const result = await response.json();
-
-    return result;
 }
 
 async function getToken(callback) {
