@@ -35,11 +35,12 @@ class TestExtension extends Autodesk.Viewing.Extension {
 
     clearStatus() {
         this.viewer.clearThemingColors(this.viewer.model);
+        this.viewer.isolate();
     }
 
     displayStatus(statusData) {
         return new Promise((resolve) => {
-            this.viewer.clearThemingColors(this.viewer.model);
+            this.clearStatus();
             this.viewer.model.getExternalIdMapping((mapping) => {
                 const names = Object.keys(statusData);
                 const allIds = [];
@@ -129,6 +130,11 @@ class TestExtension extends Autodesk.Viewing.Extension {
             this._elementStatusPanel = new ElementStatusPanel(this.viewer.container, 'Skanska.Test.ElementStatusPanel', 'Element Status', {
                 extension: this
             });
+            this._elementStatusPanel.addVisibilityListener((state => {
+                if (!state) {
+                    this.clearStatus();
+                }
+            }));
             this.viewer.addPanel(this._elementStatusPanel);
             this._elementStatusPanel.setVisible(true);
         } else {
