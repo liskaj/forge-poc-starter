@@ -1,5 +1,8 @@
 let btnLoad;
 let container;
+let storageService;
+let project;
+let item;
 let viewer;
 let initialized = false;
 
@@ -13,6 +16,7 @@ $(document).ready(async () => {
     project = $('#project');
     item = $('#item');
     await initialize();
+    storageService = new StorageService();
 });
 
 async function onLoadClick() {
@@ -73,7 +77,8 @@ function load(urn) {
                 const config = {
                     extensions: [
                         'Skanska.Test'
-                    ]
+                    ],
+                    storageService: storageService
                 };
 
                 viewer = new Autodesk.Viewing.GuiViewer3D(container[0], config);
