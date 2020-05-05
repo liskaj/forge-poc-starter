@@ -33,8 +33,13 @@ class TestExtension extends Autodesk.Viewing.Extension {
         return this._storageService;
     }
 
+    clearStatus() {
+        this.viewer.clearThemingColors(this.viewer.model);
+    }
+
     displayStatus(statusData) {
         return new Promise((resolve) => {
+            this.viewer.clearThemingColors(this.viewer.model);
             this.viewer.model.getExternalIdMapping((mapping) => {
                 const names = Object.keys(statusData);
                 const allIds = [];

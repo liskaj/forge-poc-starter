@@ -39,7 +39,20 @@ class ElementStatusPanel extends Autodesk.Viewing.UI.DockingPanel {
             }
             ids.push(i.externalID);
         });
-        console.debug(`${statusData}`);
+        // update list
+        const names = Object.keys(statusData);
+
+        this._statusList.empty();
+        names.forEach((n) => {
+            const ids = statusData[n];
+            const div = $(`
+                <div>
+                    <span>${n}</span>
+                    <span>${ids.length}</span>
+                </div>`);
+
+            this._statusList.append(div);
+        });
         await this._extension.displayStatus(statusData);
     }
 
@@ -58,6 +71,7 @@ class ElementStatusPanel extends Autodesk.Viewing.UI.DockingPanel {
         tmp.innerHTML = content;
         this.scrollContainer.appendChild(tmp.childNodes[0]);
         // bind to controls
+        this._statusList = $('#status-list');
         // update controls
         this._templateLoaded = true;
         await this.refresh();
