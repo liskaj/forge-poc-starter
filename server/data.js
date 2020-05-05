@@ -3,8 +3,8 @@ const { BIM360Client } = require('forge-server-utils');
 const config = require('./config');
 
 const bimClient = new BIM360Client({
-    client_id: config.clientID,
-    client_secret: config.clientSecret
+    client_id: config.forge.clientID,
+    client_secret: config.forge.clientSecret
 });
 const router = express.Router();
 

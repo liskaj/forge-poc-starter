@@ -2,7 +2,7 @@ const express = require('express');
 const { AuthenticationClient } = require('forge-server-utils');
 const config = require('./config');
 
-const authenticationClient = new AuthenticationClient(config.clientID, config.clientSecret);
+const authenticationClient = new AuthenticationClient(config.forge.clientID, config.forge.clientSecret);
 const router = express.Router();
 
 // POST /api/auth/token
