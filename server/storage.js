@@ -18,6 +18,20 @@ router.get('/lookup/:key', async (req, res) => {
     }
 });
 
+// GET /api/storage/element
+router.get('/element/:itemID', async (req, res) => {
+    try {
+        const itemID = req.params.itemID;
+        const url = `${config.storage.baseURL}/element/${itemID}`;
+        const result = await get(url);
+
+        res.json(result);
+    } catch (err) {
+        console.error(err);
+        res.status(400).send(err);
+    }
+});
+
 // POST /api/storage/element
 router.post('/element', async (req, res) => {
     try {
@@ -69,7 +83,6 @@ async function post(url, data) {
             reject(err);
         });
     });
-
 }
 
 module.exports = router;
